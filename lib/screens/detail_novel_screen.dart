@@ -234,6 +234,7 @@ class _NovelDetailScreenState extends State<NovelDetailScreen> {
                     itemBuilder: (context, index) {
                       final chapter = snapshot.data![index];
                       return Card(
+                        color: Theme.of(context).cardColor,
                         child: ListTile(
                           title: Text('Chapter ${chapter.chapterNumber}'),
                           trailing: Row(
@@ -298,8 +299,8 @@ class _NovelDetailScreenState extends State<NovelDetailScreen> {
               onPressed: () async {
                 await _chapterService.deleteChapter(chapter.id);
                 // ignore: use_build_context_synchronously
-                Navigator.of(context).pop(); // Close the dialog
-                _reloadChapters(); // Reload chapter list
+                Navigator.of(context).pop(); 
+                _reloadChapters(); 
               },
             ),
           ],

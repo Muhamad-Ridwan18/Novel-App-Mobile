@@ -22,7 +22,7 @@ class ChapterDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              chapter.content, // Assuming you have a content field in ChapterElement
+              chapter.content, 
               style: const TextStyle(fontSize: 18.0),
             ),
             const SizedBox(height: 16.0),
@@ -31,6 +31,9 @@ class ChapterDetailScreen extends StatelessWidget {
               children: [
                 if (currentIndex > 0)
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).highlightColor,
+                    ),
                     onPressed: () {
                       Navigator.pushReplacement(
                         context,
@@ -39,10 +42,13 @@ class ChapterDetailScreen extends StatelessWidget {
                         ),
                       );
                     },
-                    child: const Text('Previous Chapter'),
+                    child: const Text('Previous Chapter', style: TextStyle(color: Colors.white)),
                   ),
                 if (currentIndex < chapters.length - 1)
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).highlightColor,
+                    ),
                     onPressed: () {
                       Navigator.pushReplacement(
                         context,
@@ -51,13 +57,17 @@ class ChapterDetailScreen extends StatelessWidget {
                         ),
                       );
                     },
-                    child: const Text('Next Chapter'),
+                    child: const Text(
+                      'Next Chapter',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
               ],
             ),
           ],
         ),
       ),
+      
     );
   }
 }

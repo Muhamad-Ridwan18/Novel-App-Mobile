@@ -116,7 +116,7 @@ class _NovelScreenState extends State<NovelScreen> {
         ],
         automaticallyImplyLeading: false,
         backgroundColor: themeProvider.getThemeMode() == ThemeMode.light
-            ? themeProvider.getLightTheme().appBarTheme.backgroundColor
+            ? themeProvider.getLightTheme().appBarTheme. backgroundColor
             : themeProvider.getDarkTheme().appBarTheme.backgroundColor,
       ),
       body: Center(
@@ -142,7 +142,9 @@ class _NovelScreenState extends State<NovelScreen> {
                           hintText: 'Search by title',
                           prefixIcon: Icon(Icons.search),
                           border: OutlineInputBorder(),
+                          isDense: true,
                         ),
+                        
                       ),
                     ),
                     const Padding(
@@ -343,44 +345,53 @@ class _NovelScreenState extends State<NovelScreen> {
           },
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        height: 60,
-        color: themeProvider.getThemeMode() == ThemeMode.light
-            ? themeProvider.getLightTheme().primaryColor
-            : themeProvider.getDarkTheme().primaryColor,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.home, color: Colors.white),
-              onPressed: () {
-                // Navigate to home or main screen
-              },
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: themeProvider.getThemeMode() == ThemeMode.light ? Colors.blue : Colors.grey.shade900,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(10),
+              bottomLeft: Radius.circular(10),
+              bottomRight: Radius.circular(10),
             ),
-            IconButton(
-              icon: const Icon(Icons.menu_book_rounded, color: Colors.white),
-              onPressed: () {
-                // Navigate to new novels or relevant screen
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.my_library_books_outlined, color: Colors.white),
-              onPressed: () {
-                // Navigate to my library or relevant screen
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.add, color: Colors.white),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const NovelCreateScreen()),
-                );
-              },
-            ),
-          ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.home, color: Colors.white),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const NovelScreen()),
+                  );
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.search, color: Colors.white),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const NovelCreateScreen()),
+                  );
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.person, color: Colors.white),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const NovelScreen()),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+

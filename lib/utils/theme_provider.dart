@@ -12,7 +12,7 @@ class ThemeProvider with ChangeNotifier {
 
   void toggleTheme() {
     _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
-    _saveThemeMode(_themeMode); // Save theme preference
+    _saveThemeMode(_themeMode); 
     notifyListeners();
   }
 
