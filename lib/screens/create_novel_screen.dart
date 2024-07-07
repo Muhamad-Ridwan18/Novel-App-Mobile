@@ -152,6 +152,7 @@ class _NovelCreateScreenState extends State<NovelCreateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.white,
         title: Text(widget.novelToEdit == null ? 'Create Novel' : 'Edit Novel'),
       ),
       body: _isLoading

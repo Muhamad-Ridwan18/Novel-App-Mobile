@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+// ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import '../models/chapter.dart';
@@ -27,7 +27,6 @@ class _NovelDetailScreenState extends State<NovelDetailScreen> {
   final ChapterService _chapterService = ChapterService();
   final NovelService _novelService = NovelService();
   int? _userId;
-  
 
   void _loadUserId() async {
     final prefs = await SharedPreferences.getInstance();
@@ -78,15 +77,39 @@ class _NovelDetailScreenState extends State<NovelDetailScreen> {
     });
   }
 
+  void _showEditChapterScreen(ChapterElement chapter) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChapterCreateScreen(
+          novelId: widget.novel.id,
+          chapter: chapter,
+        ),
+      ),
+    ).then((chapterUpdated) {
+      if (chapterUpdated == true) {
+        _reloadChapters();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+     
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.novel.title),
+        foregroundColor: Colors.white,
+        title: Text(
+          widget.novel.title,
+          style: const TextStyle(color: Colors.white),
+        ),
         actions: [
           if (widget.novel.author['id'] == _userId)
             IconButton(
-              icon: const Icon(Icons.edit),
+              icon: const Icon(
+                Icons.edit,
+                color: Colors.white,
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -100,7 +123,10 @@ class _NovelDetailScreenState extends State<NovelDetailScreen> {
             ),
           if (widget.novel.author['id'] == _userId)
             IconButton(
-              icon: const Icon(Icons.delete),
+              icon: const Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                ),
               onPressed: () {
                 _showDeleteConfirmationDialog();
               },
@@ -155,9 +181,38 @@ class _NovelDetailScreenState extends State<NovelDetailScreen> {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Chapters',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Chapters',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      if (widget.novel.author['id'] == _userId)
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(context).dividerColor,
+                          backgroundColor: Theme.of(context).highlightColor,
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+
+                          ),
+                        ),
+                        onPressed: () async {
+                          bool? chapterCreated = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChapterCreateScreen(novelId: widget.novel.id),
+                            ),
+                          );
+                          if (chapterCreated == true) {
+                            _reloadChapters();
+                          }
+                        }, 
+                        child: const Text('Add Chapter')
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -188,19 +243,7 @@ class _NovelDetailScreenState extends State<NovelDetailScreen> {
                                 IconButton(
                                   icon: const Icon(Icons.edit),
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ChapterCreateScreen(
-                                          novelId: widget.novel.id,
-                                          chapter: chapter,
-                                        ),
-                                      ),
-                                    ).then((chapterUpdated) {
-                                      if (chapterUpdated == true) {
-                                        _reloadChapters();
-                                      }
-                                    });
+                                    _showEditChapterScreen(chapter);
                                   },
                                 ),
                               if (widget.novel.author['id'] == _userId)
@@ -233,20 +276,6 @@ class _NovelDetailScreenState extends State<NovelDetailScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          bool? chapterCreated = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChapterCreateScreen(novelId: widget.novel.id),
-            ),
-          );
-          if (chapterCreated == true) {
-            _reloadChapters();
-          }
-        },
-        child: const Icon(Icons.add),
-      ),
     );
   }
 
@@ -268,6 +297,7 @@ class _NovelDetailScreenState extends State<NovelDetailScreen> {
               child: const Text('Delete'),
               onPressed: () async {
                 await _chapterService.deleteChapter(chapter.id);
+                // ignore: use_build_context_synchronously
                 Navigator.of(context).pop(); // Close the dialog
                 _reloadChapters(); // Reload chapter list
               },

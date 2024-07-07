@@ -27,7 +27,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final response = await _authService.register(name, email, password, passwordConfirmation);
 
     if (response.success) {
-
       // Pindah ke halaman lain setelah registrasi berhasil
       Navigator.pushReplacement(
         context,
@@ -43,30 +42,62 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
+      appBar: AppBar(
+        title: const Text('Register'),
+        foregroundColor: Colors.white,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Logo atau Header
+            Center(
+              child: Text(
+                'Novel App',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Input Fields
             TextField(
               controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
+              decoration: const InputDecoration(
+                labelText: 'Name',
+                border: OutlineInputBorder(),
+              ),
             ),
+            const SizedBox(height: 12),
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+              ),
             ),
+            const SizedBox(height: 12),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+              ),
               obscureText: true,
             ),
+            const SizedBox(height: 12),
             TextField(
               controller: _passwordConfirmationController,
-              decoration: const InputDecoration(labelText: 'Confirm Password'),
+              decoration: const InputDecoration(
+                labelText: 'Confirm Password',
+                border: OutlineInputBorder(),
+              ),
               obscureText: true,
             ),
             const SizedBox(height: 20),
+
+            // Register Button
             ElevatedButton(
               onPressed: _register,
               child: const Text('Register'),

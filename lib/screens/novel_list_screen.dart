@@ -1,8 +1,8 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+// ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import '../models/novel.dart';
-import '../models/category.dart'; 
+import '../models/category.dart';
 import '../services/novel_service.dart';
 import '../services/category_service.dart';
 import '../services/auth_service.dart';
@@ -11,7 +11,6 @@ import 'detail_novel_screen.dart';
 import 'login_screen.dart';
 import 'package:provider/provider.dart';
 import '../utils/theme_provider.dart';
-
 
 class NovelScreen extends StatefulWidget {
   const NovelScreen({super.key});
@@ -26,11 +25,10 @@ class _NovelScreenState extends State<NovelScreen> {
   late Future<List<Category>> futureCategories;
   final NovelService _novelService = NovelService();
   final CategoryService _categoryService = CategoryService();
-  final AuthService _authService = AuthService('http://10.0.2.2:8000/api'); 
+  final AuthService _authService = AuthService('http://10.0.2.2:8000/api');
   List<NovelElement> _allNovels = [];
   List<NovelElement> _filteredNovels = [];
-  Map<int, Category> _categoryMap = {}; 
-  bool isDarkMode = false;
+  Map<int, Category> _categoryMap = {};
 
   @override
   void initState() {
@@ -39,31 +37,29 @@ class _NovelScreenState extends State<NovelScreen> {
   }
 
   void _loadData() {
-    futureNovel = _novelService.fetchNovels();
-    futureLastNovel = _novelService.fetchLastNovels();
-    futureCategories = _categoryService.fetchCategories();
-
-    futureNovel.then((novelData) {
+    futureNovel = _novelService.fetchNovels().then((novelData) {
       setState(() {
         _allNovels = novelData.novels;
         _filteredNovels = _allNovels;
       });
+      return novelData;
     });
 
-    futureLastNovel.then((lastNovelData) {
+    futureLastNovel = _novelService.fetchLastNovels().then((lastNovelData) {
       setState(() {
         _allNovels = lastNovelData.novels;
         _filteredNovels = _allNovels;
       });
+      return lastNovelData;
     });
 
-    futureCategories.then((categories) {
+    futureCategories = _categoryService.fetchCategories().then((categories) {
       setState(() {
         _categoryMap = {for (var category in categories) category.id: category};
       });
+      return categories;
     });
   }
-
 
   void _filterNovels(String query) {
     setState(() {
@@ -93,24 +89,24 @@ class _NovelScreenState extends State<NovelScreen> {
     await _authService.logout();
 
     Navigator.pushReplacement(
+      // ignore: use_build_context_synchronously
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
-  }  
+  }
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-            'Novel List',
-            style: TextStyle(color: Colors.white),
-          ),
+        title: const Text('Novel', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: const Icon(Icons.dark_mode, color: Colors.white),
             onPressed: () {
-              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+              themeProvider.toggleTheme();
             },
           ),
           IconButton(
@@ -118,8 +114,10 @@ class _NovelScreenState extends State<NovelScreen> {
             onPressed: () => _logout(context),
           ),
         ],
-        // remove back button
         automaticallyImplyLeading: false,
+        backgroundColor: themeProvider.getThemeMode() == ThemeMode.light
+            ? themeProvider.getLightTheme().appBarTheme.backgroundColor
+            : themeProvider.getDarkTheme().appBarTheme.backgroundColor,
       ),
       body: Center(
         child: FutureBuilder<Novel>(
@@ -172,10 +170,11 @@ class _NovelScreenState extends State<NovelScreen> {
                               itemCount: _filteredNovels.length,
                               itemBuilder: (context, index) {
                                 NovelElement novel = _filteredNovels[index];
-                                Map<String, dynamic> author = novel.author;
+                                Category? category = _categoryMap[novel.categoryId];
                                 return InkWell(
                                   onTap: () => _navigateToDetailScreen(novel),
                                   child: Card(
+                                    color: themeProvider.getThemeMode() == ThemeMode.light ? Colors.white : Colors.grey.shade900,
                                     margin: const EdgeInsets.all(8.0),
                                     child: SizedBox(
                                       width: 150,
@@ -209,15 +208,18 @@ class _NovelScreenState extends State<NovelScreen> {
                                               novel.title,
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontWeight: FontWeight.bold,
+                                                color: themeProvider.getThemeMode() == ThemeMode.light
+                                                    ? themeProvider.getLightTheme().textTheme.bodyLarge!.color
+                                                    : themeProvider.getDarkTheme().textTheme.bodyMedium!.color,
                                               ),
                                             ),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                             child: Text(
-                                              author['name'],
+                                              category?.name ?? 'Unknown',
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: const TextStyle(
@@ -255,11 +257,12 @@ class _NovelScreenState extends State<NovelScreen> {
                       itemCount: _filteredNovels.length,
                       itemBuilder: (context, index) {
                         NovelElement novel = _filteredNovels[index];
-                        Category? category = _categoryMap[novel.categoryId]; 
-                        Map<String, dynamic> author = novel.author;// Get category by id
+                        Category? category = _categoryMap[novel.categoryId];
+                        // Map<String, dynamic> author = novel.author;
                         return InkWell(
                           onTap: () => _navigateToDetailScreen(novel),
                           child: Card(
+                            color: themeProvider.getThemeMode() == ThemeMode.light ? Colors.white : Colors.grey.shade900,
                             margin: const EdgeInsets.all(8.0),
                             child: ListTile(
                               leading: ClipRRect(
@@ -284,20 +287,43 @@ class _NovelScreenState extends State<NovelScreen> {
                               ),
                               title: Text(
                                 novel.title,
-                                style: const TextStyle(fontSize: 13),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: themeProvider.getThemeMode() == ThemeMode.light
+                                      ? themeProvider.getLightTheme().textTheme.bodyLarge!.color
+                                      : themeProvider.getDarkTheme().textTheme.bodyLarge!.color,
+                                ),
                               ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(author['name']),
+                                  // Text(author['name']),
                                   if (category != null)
-                                    Text('Category: ${category.name}'),
+                                    Text(
+                                      'Category : ${category.name}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: themeProvider.getThemeMode() == ThemeMode.light
+                                            ? themeProvider.getLightTheme().textTheme.bodyLarge!.color
+                                            : themeProvider.getDarkTheme().textTheme.bodyLarge!.color,
+                                      )
+                                    ),
                                   Wrap(
                                     spacing: 6.0,
                                     runSpacing: 6.0,
                                     children: novel.tags.map((tag) {
                                       return Chip(
-                                        label: Text(tag.name),
+                                        side: BorderSide(
+                                          color: themeProvider.getThemeMode() == ThemeMode.light ? Colors.grey.shade500 : Colors.grey.shade800,
+                                        ),
+                                        backgroundColor: themeProvider.getThemeMode() == ThemeMode.light ? Colors.white : Colors.grey.shade800,
+                                        label: Text(tag.name,
+                                          style: TextStyle(
+                                            color: themeProvider.getThemeMode() == ThemeMode.light
+                                                ? themeProvider.getLightTheme().textTheme.bodyLarge!.color
+                                                : themeProvider.getDarkTheme().textTheme.bodyLarge!.color,
+                                          ),
+                                        ),
                                       );
                                     }).toList(),
                                   ),
@@ -317,16 +343,15 @@ class _NovelScreenState extends State<NovelScreen> {
           },
         ),
       ),
-      
       bottomNavigationBar: BottomAppBar(
         height: 60,
-        color: Theme.of(context).primaryColor,
+        color: themeProvider.getThemeMode() == ThemeMode.light
+            ? themeProvider.getLightTheme().primaryColor
+            : themeProvider.getDarkTheme().primaryColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            
             IconButton(
-
               icon: const Icon(Icons.home, color: Colors.white),
               onPressed: () {
                 // Navigate to home or main screen
@@ -341,7 +366,7 @@ class _NovelScreenState extends State<NovelScreen> {
             IconButton(
               icon: const Icon(Icons.my_library_books_outlined, color: Colors.white),
               onPressed: () {
-                // Navigate to new novels or relevant screen
+                // Navigate to my library or relevant screen
               },
             ),
             IconButton(

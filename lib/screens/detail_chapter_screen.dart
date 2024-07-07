@@ -14,6 +14,7 @@ class ChapterDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Chapter ${chapter.chapterNumber}'),
+        foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
