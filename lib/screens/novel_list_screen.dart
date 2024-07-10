@@ -157,91 +157,97 @@ class _NovelScreenState extends State<NovelScreen> {
                         ),
                       ),
                     ),
-                    FutureBuilder<Novel>(
-                      future: futureLastNovel,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return Text('${snapshot.error}');
-                        } else if (snapshot.hasData) {
-                          return SizedBox(
-                            height: 280,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: _filteredNovels.length,
-                              itemBuilder: (context, index) {
-                                NovelElement novel = _filteredNovels[index];
-                                Category? category = _categoryMap[novel.categoryId];
-                                return InkWell(
-                                  onTap: () => _navigateToDetailScreen(novel),
-                                  child: Card(
-                                    color: themeProvider.getThemeMode() == ThemeMode.light ? Colors.white : Colors.grey.shade900,
-                                    margin: const EdgeInsets.all(8.0),
-                                    child: SizedBox(
-                                      width: 150,
-                                      height: 290,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(5.0),
-                                            child: AspectRatio(
-                                              aspectRatio: 117 / 134,
-                                              child: Image.network(
-                                                novel.coverImage,
-                                                width: 126,
-                                                height: 174,
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (context, error, stackTrace) {
-                                                  return Image.asset(
-                                                    'assets/cover-image.jpg',
-                                                    width: 136,
-                                                    height: 184,
-                                                    fit: BoxFit.cover,
-                                                  );
-                                                },
+                    Container(
+                      decoration: BoxDecoration(
+                        color: themeProvider.getThemeMode() == ThemeMode.light ? Colors.grey.shade100 : Colors.grey.shade900,
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 10 ),
+                      child: FutureBuilder<Novel>(
+                        future: futureLastNovel,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('${snapshot.error}');
+                          } else if (snapshot.hasData) {
+                            return SizedBox(
+                              height: 280,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: _filteredNovels.length,
+                                itemBuilder: (context, index) {
+                                  NovelElement novel = _filteredNovels[index];
+                                  Category? category = _categoryMap[novel.categoryId];
+                                  return InkWell(
+                                    onTap: () => _navigateToDetailScreen(novel),
+                                    child: Card(
+                                      color: themeProvider.getThemeMode() == ThemeMode.light ? Colors.white : Colors.grey.shade900,
+                                      margin: const EdgeInsets.all(8.0),
+                                      child: SizedBox(
+                                        width: 150,
+                                        height: 290,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius: BorderRadius.circular(5.0),
+                                              child: AspectRatio(
+                                                aspectRatio: 117 / 134,
+                                                child: Image.network(
+                                                  novel.coverImage,
+                                                  width: 126,
+                                                  height: 174,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (context, error, stackTrace) {
+                                                    return Image.asset(
+                                                      'assets/cover-image.jpg',
+                                                      width: 136,
+                                                      height: 184,
+                                                      fit: BoxFit.cover,
+                                                    );
+                                                  },
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              novel.title,
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: themeProvider.getThemeMode() == ThemeMode.light
-                                                    ? themeProvider.getLightTheme().textTheme.bodyLarge!.color
-                                                    : themeProvider.getDarkTheme().textTheme.bodyMedium!.color,
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                novel.title,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: themeProvider.getThemeMode() == ThemeMode.light
+                                                      ? themeProvider.getLightTheme().textTheme.bodyLarge!.color
+                                                      : themeProvider.getDarkTheme().textTheme.bodyMedium!.color,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                            child: Text(
-                                              category?.name ?? 'Unknown',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 12.0,
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                              child: Text(
+                                                category?.name ?? 'Unknown',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 12.0,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        } else {
-                          return const Text('No data');
-                        }
-                      },
+                                  );
+                                },
+                              ),
+                            );
+                          } else {
+                            return const Text('No data');
+                          }
+                        },
+                      ),
                     ),
                     const Padding(
                       padding: EdgeInsets.all(8.0),
@@ -266,6 +272,7 @@ class _NovelScreenState extends State<NovelScreen> {
                           child: Card(
                             color: themeProvider.getThemeMode() == ThemeMode.light ? Colors.white : Colors.grey.shade900,
                             margin: const EdgeInsets.all(8.0),
+                            elevation: 2,
                             child: ListTile(
                               leading: ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
@@ -345,51 +352,16 @@ class _NovelScreenState extends State<NovelScreen> {
           },
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: themeProvider.getThemeMode() == ThemeMode.light ? Colors.blue : Colors.grey.shade900,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(10),
-              topRight: Radius.circular(10),
-              bottomLeft: Radius.circular(10),
-              bottomRight: Radius.circular(10),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const NovelCreateScreen(),
             ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.home, color: Colors.white),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const NovelScreen()),
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.search, color: Colors.white),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const NovelCreateScreen()),
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.person, color: Colors.white),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const NovelScreen()),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
+          );
+        },
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

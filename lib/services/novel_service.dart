@@ -104,4 +104,18 @@ class NovelService {
       throw Exception('Failed to delete novel: ${response.statusCode} - ${response.body}');
     }
   }
+
+  Future<NovelElement> fetchNovelByAuthorId(int id) async {
+   final response = await _authenticatedRequest((headers) => http.get(
+      Uri.parse('$baseUrl/getNovelByAuthor/$id'),
+      headers: headers,
+    ));
+
+    if (response.statusCode == 200) {
+      return NovelElement.fromJson(jsonDecode(response.body)['novel']);
+    } else {
+      throw Exception('Failed to load novel');
+    }
+  }
+    
 }
