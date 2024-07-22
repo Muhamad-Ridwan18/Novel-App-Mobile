@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/category.dart';
 
 class CategoryService {
-  final String baseUrl = 'http://10.0.2.2:8000/api';
+  final String baseUrl = 'http://uas-novel-app.c1.is/api';
 
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();

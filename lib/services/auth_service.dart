@@ -5,7 +5,7 @@ import 'package:frontend/models/login_response.dart';
 import '../models/register_response.dart';
 
 class AuthService {
-  final String baseUrl; // Replace with your Laravel API URL
+  final String baseUrl; 
 
   
   // Constructor

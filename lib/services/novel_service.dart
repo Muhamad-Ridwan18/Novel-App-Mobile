@@ -4,7 +4,7 @@ import '../models/novel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NovelService {
-  static const String baseUrl = 'http://10.0.2.2:8000/api';
+  static const String baseUrl = 'http://uas-novel-app.c1.is/api';
   
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();

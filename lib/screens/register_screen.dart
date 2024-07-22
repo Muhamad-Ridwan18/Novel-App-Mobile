@@ -17,7 +17,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _passwordConfirmationController = TextEditingController();
-  final _authService = AuthService('http://10.0.2.2:8000/api'); // Ganti dengan URL Laravel Anda
+  final _authService = AuthService('http://uas-novel-app.c1.is/api'); 
 
   void _register() async {
     final name = _nameController.text;
